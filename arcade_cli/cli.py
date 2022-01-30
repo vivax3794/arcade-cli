@@ -130,6 +130,13 @@ def draw_stars(file: TextIOWrapper) -> None:
 @click.argument("input_file", type=click.File("r"))
 @click.argument("output_file", type=click.File("w+"))
 def modify_stars(input_file: TextIOWrapper, output_file: TextIOWrapper, scale: float, x_offset: float, y_offset: float) -> None:
+    """
+    Modify stars in a file
+
+    Arguments:
+        input_file: source file of stars
+        output_file: file to save stars in
+    """
     stars = arcade.load_stars_from_file(input_file)
     stars = [
         (x / scale + x_offset, y / scale + x_offset, type_)
