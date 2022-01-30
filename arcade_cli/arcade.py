@@ -11,13 +11,6 @@ import requests
 Star = Tuple[float, float, int]
 
 
-NGROK_URL = "https://raw.githubusercontent.com/MatissesProjects/matissesprojects.github.io/master/CNAME"
-
-
-def get_ngrok() -> str:
-    resp = requests.get(NGROK_URL)
-    return resp.text
-
 def store_stars_in_file(stars: List[Star], file: TextIOWrapper) -> None:
     writer = csv.writer(file, dialect="unix")
 

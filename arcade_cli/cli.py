@@ -37,12 +37,6 @@ def arcade_cli():
     pass
 
 
-@arcade_cli.command(name="ngrok", )
-def get_ngrok() -> str:
-    """Get the current ngrok url for the arcade."""
-    ngrok = arcade.get_ngrok()
-    console.print(f"current ngrok tunnel: [bold green]{ngrok}[/bold green]")
-
 @arcade_cli.command(name="show")
 @click.option("--force-print", is_flag=True, help="print stars, even if there is a lot")
 @click.argument("file", type=click.File("r"))
@@ -65,9 +59,9 @@ def show_star_file(file: TextIOWrapper, force_print: bool) -> None:
     console.print(f"amount of stars: [bold cyan]{len(stars)}[/bold cyan]")
 
 @arcade_cli.command(name="download")
-@click.argument("bucket", type=int)
-@click.option("-o", "--output-file", type=click.File("w+"), help="file to store stars in")
 @click.option("--show", is_flag=True, help="print stars to terminal")
+@click.argument("output_file", type=click.File("w+"))
+@click.argument("bucket", type=int)
 def download_stars(bucket: int, output_file: TextIOWrapper | None, show: bool) -> None:
     """
     Load stars from your extension buckets.
@@ -75,6 +69,7 @@ def download_stars(bucket: int, output_file: TextIOWrapper | None, show: bool) -
     \b
     Arguments:
         bucket: a number for your bucket.
+        output_file: file to store stars in
     """
 
     stars = arcade.get_stars_from_bucket(jwt, bucket)
