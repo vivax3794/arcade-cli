@@ -16,7 +16,7 @@ console = RichConsole()
 jwt = os.getenv("ARCADE_JWT")
 
 if jwt is None:
-    console.print("[red]ERROR: you need to set [yellow]ARCADE-JWT[/yellow] env var[/red]")
+    console.print("[red]ERROR: you need to set [yellow]ARCADE_JWT[/yellow] env var[/red]")
     exit(1)
 
 def display_stars(stars: List[arcade.Star]) -> None:
