@@ -13,7 +13,7 @@ from . import arcade
 
 
 console = RichConsole()
-jwt = os.getenv("ARCADE-JWT")
+jwt = os.getenv("ARCADE_JWT")
 
 if jwt is None:
     console.print("[red]ERROR: you need to set [yellow]ARCADE-JWT[/yellow] env var[/red]")
