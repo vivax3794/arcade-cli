@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from io import TextIOWrapper
+from typing import List
 import os
 
 from rich.console import Console as RichConsole
@@ -18,7 +19,7 @@ if jwt is None:
     console.print("[red]ERROR: you need to set [yellow]ARCADE-JWT[/yellow] env var[/red]")
     exit(1)
 
-def display_stars(stars: list[arcade.Star]) -> None:
+def display_stars(stars: List[arcade.Star]) -> None:
     table = RichTable()
     table.add_column("x", style="yellow")
     table.add_column("y", style="yellow")

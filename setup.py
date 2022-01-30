@@ -3,6 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name='arcade_cli',
     version='0.1.0',
+    # python_requires='>3.10.0',
     packages=find_packages(),
     include_package_data=True,
     py_modules=['arcade_cli'],

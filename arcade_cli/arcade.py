@@ -2,16 +2,13 @@ from __future__ import annotations
 
 import csv
 from io import TextIOWrapper
-from typing import TYPE_CHECKING
+from typing import List, Tuple, Dict
 
 import jwt
 import requests
 
-if TYPE_CHECKING:
-    from typing import TypeAlias
 
-
-Star: TypeAlias = tuple[float, float, int]
+Star = Tuple[float, float, int]
 
 
 NGROK_URL = "https://raw.githubusercontent.com/MatissesProjects/matissesprojects.github.io/master/CNAME"
@@ -21,13 +18,13 @@ def get_ngrok() -> str:
     resp = requests.get(NGROK_URL)
     return resp.text
 
-def store_stars_in_file(stars: list[Star], file: TextIOWrapper) -> None:
+def store_stars_in_file(stars: List[Star], file: TextIOWrapper) -> None:
     writer = csv.writer(file, dialect="unix")
 
     for star in stars:
         writer.writerow(star)
 
-def load_stars_from_file(file: TextIOWrapper) -> list[Star]:
+def load_stars_from_file(file: TextIOWrapper) -> List[Star]:
     reader = csv.reader(file)
     
     stars = []
@@ -42,19 +39,19 @@ def get_twitch_id_from_jwt(jwt_token: str) -> str:
     data = jwt.decode(jwt_token, options={"verify_signature": False})
     return data["opaque_user_id"]
 
-def from_api_stars(data: list[dict[str, float]]) -> list[Star]:
+def from_api_stars(data: List[Dict[str, float]]) -> List[Star]:
     return [
         (star["x"], star["y"], int(star["currentStar"]))
         for star in data
     ]
 
-def to_api_stars(data: list[Star]) -> list[dict[str, float]]:
+def to_api_stars(data: List[Star]) -> List[Dict[str, float]]:
     return [
         {"x": star[0], "y": star[1], "currentStar": float(star[2])}
         for star in data
     ]
 
-def get_stars_from_bucket(jwt: str, bucket: int) -> list[Star]:
+def get_stars_from_bucket(jwt: str, bucket: int) -> List[Star]:
     data = {
         "jwt": jwt,
         "saveIndex": bucket
@@ -65,7 +62,7 @@ def get_stars_from_bucket(jwt: str, bucket: int) -> list[Star]:
 
     return from_api_stars(data["data"]["data"])
 
-def save_stars_to_bucket(jwt: str, bucket: int, stars: list[Star]) -> None:
+def save_stars_to_bucket(jwt: str, bucket: int, stars: List[Star]) -> None:
     data = {
         # "twitchId": get_twitch_id_from_jwt(jwt),
         "jwt": jwt,
@@ -75,7 +72,7 @@ def save_stars_to_bucket(jwt: str, bucket: int, stars: list[Star]) -> None:
 
     requests.post("https://arcade-placement-tool.herokuapp.com/send/toDatabase", json=data)
 
-def draw_in_stars(jwt: str, stars: list[Star]) -> None:
+def draw_in_stars(jwt: str, stars: List[Star]) -> None:
     data = {
         "jwt": jwt,
         "stars": to_api_stars(stars)
