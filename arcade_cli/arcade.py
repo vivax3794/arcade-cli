@@ -44,7 +44,7 @@ def to_api_stars(data: List[Star]) -> List[Dict[str, float]]:
         for star in data
     ]
 
-def get_stars_from_bucket(jwt: str, bucket: int) -> List[Star]:
+def get_stars_from_bucket(jwt: str, bucket: int) -> List[Star] | str:
     data = {
         "jwt": jwt,
         "saveIndex": bucket
@@ -53,11 +53,13 @@ def get_stars_from_bucket(jwt: str, bucket: int) -> List[Star]:
     resp = requests.post("http://arcade-placement-tool.herokuapp.com/get/userStarSaveData", json=data)
     data = resp.json()
 
+    if not data["success"]:
+        return data["data"]
+
     return from_api_stars(data["data"]["data"])
 
 def save_stars_to_bucket(jwt: str, bucket: int, stars: List[Star]) -> None:
     data = {
-        # "twitchId": get_twitch_id_from_jwt(jwt),
         "jwt": jwt,
         "saveIndex": bucket,
         "stars": to_api_stars(stars)

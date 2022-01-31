@@ -1,4 +1,5 @@
 from __future__ import annotations
+from email.policy import default
 
 from io import TextIOWrapper
 from typing import List
@@ -9,7 +10,7 @@ from rich.table import Table as RichTable
 import click
 import more_itertools
 
-from . import arcade
+from . import arcade, draw
 
 
 console = RichConsole()
@@ -73,6 +74,10 @@ def download_stars(bucket: int, output_file: TextIOWrapper | None, show: bool) -
     """
 
     stars = arcade.get_stars_from_bucket(jwt, bucket)
+
+    if isinstance(stars, str):
+        console.print(f"[red]ERROR:[/red] [yellow]{stars}[/yellow]")
+        return
 
     if show:
         display_stars(stars)
@@ -141,3 +146,29 @@ def modify_stars(input_file: TextIOWrapper, output_file: TextIOWrapper, scale: f
     arcade.store_stars_in_file(stars, output_file)
 
     console.print("modified stars")
+
+@arcade_cli.group(name="render")
+def render_group():
+    """Draw stars based on given input."""
+
+
+@render_group.command(name="math")
+@click.option("--start", type=float, default=0, help="where the input to the formula should start")
+@click.option("--end", type=float, default=1, help="where the input to the formula should end")
+@click.option("--step", type=float, default=0.01, help="how much the input to the formula should be stepped by")
+@click.option("--star", "--type", type=int, default=1, help="the star type to use")
+@click.argument("output_file", type=click.File("w+"))
+@click.argument("formula")
+def render_math(output_file: TextIOWrapper, formula: str, start: float, end: float, step: float, star: int):
+    """
+    Render a math formula as stars.
+
+    if you use another range than 0-1, after caulcating all positions will be scaled down to fit.
+
+    \b
+    Arguments:
+        formula: formula to render, use x as the x pos
+        output_file: file to store stars in
+    """
+    stars = draw.draw_formula(formula, start, end, step, star)
+    arcade.store_stars_in_file(stars, output_file)
