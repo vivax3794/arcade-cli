@@ -100,7 +100,11 @@ def upload_stars(file: TextIOWrapper, bucket: int) -> None:
         bucket: bucket to upload to
     """
     stars = arcade.load_stars_from_file(file)
-    arcade.save_stars_to_bucket(jwt, bucket, stars)
+    result = arcade.save_stars_to_bucket(jwt, bucket, stars)
+
+    if result is not None:
+        console.print(f"[red]ERROR:[/red] [yellow]{result}[/yellow]")
+        return
 
     console.print(f"sent [bold cyan]{len(stars)}[/bold cyan] stars to save bucket [bold cyan]{bucket}[/bold cyan]")
 
@@ -119,8 +123,11 @@ def draw_stars(file: TextIOWrapper) -> None:
 
     for stars_group in more_itertools.chunked(stars, 9000):
         console.print(f"sending [yellow]{len(stars_group)}[/yellow] stars to the arcade")
-        arcade.draw_in_stars(jwt, stars_group)
-    
+        result = arcade.draw_in_stars(jwt, stars_group)
+        if result is not None:
+            console.print(f"[red]ERROR:[/red] [yellow]{result}[/yellow]")
+            return
+
     console.print("[green]DONE[/green]")
 
 @arcade_cli.command(name="modify")

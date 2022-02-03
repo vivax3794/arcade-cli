@@ -58,19 +58,28 @@ def get_stars_from_bucket(jwt: str, bucket: int) -> List[Star] | str:
 
     return from_api_stars(data["data"]["data"])
 
-def save_stars_to_bucket(jwt: str, bucket: int, stars: List[Star]) -> None:
+def save_stars_to_bucket(jwt: str, bucket: int, stars: List[Star]) -> None | str:
     data = {
         "jwt": jwt,
         "saveIndex": bucket,
         "stars": to_api_stars(stars)
     }
 
-    requests.post("https://arcade-placement-tool.herokuapp.com/send/toDatabase", json=data)
+    resp = requests.post("https://arcade-placement-tool.herokuapp.com/send/toDatabase", json=data)
 
-def draw_in_stars(jwt: str, stars: List[Star]) -> None:
+    print("STATUS CODE", resp.status_code)
+    print("RESPONSE:", resp.text)
+
+    if resp.status_code != 200:
+        return "unknown error"
+
+def draw_in_stars(jwt: str, stars: List[Star]) -> None | str:
     data = {
         "jwt": jwt,
         "stars": to_api_stars(stars)
     }
 
-    requests.post("https://arcade-placement-tool.herokuapp.com/send/toStarField", json=data)
+    resp = requests.post("https://arcade-placement-tool.herokuapp.com/send/toStarField", json=data)
+    print(resp.text)
+    if resp.status_code != 200:
+        return "unknown error"
