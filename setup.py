@@ -24,7 +24,7 @@ entry_points = \
 
 setup_kwargs = {
     'name': 'arcade-cli',
-    'version': '0.2.0',
+    'version': '0.2.1',
     'description': 'A tool for interacting with the matise arcade',
     'long_description': None,
     'author': 'vivax',

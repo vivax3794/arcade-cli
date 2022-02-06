@@ -137,7 +137,7 @@ def draw_stars(file: TextIOWrapper) -> None:
 
     console.print(f"sending [yellow]{len(stars)}[/yellow] stars to the arcade in total")
 
-    for stars_group in more_itertools.chunked(stars, 9000):
+    for stars_group in more_itertools.chunked(stars, 9001):
         console.print(
             f"sending [yellow]{len(stars_group)}[/yellow] stars to the arcade"
         )
@@ -180,6 +180,7 @@ def draw_stars(file: TextIOWrapper) -> None:
     default="none",
     help="scale stars to fit on the screen",
 )
+@click.option("--y-stars", is_flag=True, help="set star type based on y value!")
 @click.argument("input_file", type=click.File("r"))
 @click.argument("output_file", type=click.File("w+"))
 def modify_stars(
@@ -190,6 +191,7 @@ def modify_stars(
     scale_y: float,
     x_offset: float,
     y_offset: float,
+    y_stars: bool,
     fit: str,
 ) -> None:
     """
@@ -206,9 +208,12 @@ def modify_stars(
         stars = draw.normalize(stars, mode=fit)
 
     stars = [
-        (x / scale / scale_x + x_offset, y / scale / scale_y + x_offset, type_)
+        (x / scale / scale_x + x_offset, y / scale / scale_y + y_offset, type_)
         for x, y, type_ in stars
     ]
+
+    if y_stars:
+        stars = [(x, y, int(y * 23) + 1) for x, y, _ in stars]
 
     arcade.store_stars_in_file(stars, output_file)
 

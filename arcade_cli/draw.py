@@ -45,9 +45,13 @@ def draw_formula(
     stars = []
 
     while start <= end:
-        y = eval(form, {}, {"x": start, "math": math})
-        if (y_min is None or y >= y_min) and (y_max is None or y <= y_max):
-            stars.append((start, y, star_type))
+        try:
+            y = eval(form, {}, {"x": start, "math": math})
+        except Exception as e:
+            print(e)
+        else:
+            if (y_min is None or y >= y_min) and (y_max is None or y <= y_max):
+                stars.append((start, y, star_type))
         start += step
 
     return stars
