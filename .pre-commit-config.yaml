@@ -1,0 +1,47 @@
+exclude: "setup.py"
+repos:
+  - repo: local
+    hooks:
+      - id: black
+        name: black
+        description: Run black
+        entry: poetry run black
+        language: system
+        types: [python]
+        require_serial: true
+      - id: isort
+        name: isort
+        description: Run isort
+        entry: poetry run isort
+        language: system
+        types: [python]
+        require_serial: true
+      - id: flake8
+        name: flake8
+        description: Run flake8
+        entry: poetry run flake8
+        language: system
+        types: [python]
+        require_serial: true
+      - id: pyright
+        name: pyright
+        description: Run pyright
+        entry: poetry run pyright
+        language: system
+        types: [python]
+        require_serial: true
+      - id: pytest
+        name: pytest
+        description: Run pytest
+        entry: poetry run pytest tests
+        language: system
+        types: [python]
+        require_serial: true
+      - id: setup.py
+        name: setup.py
+        description: Create setup.py
+        entry: bash -c "poetry run poetry2setup > setup.py"
+        language: system
+        require_serial: true
+        pass_filenames: false
+        files: "pyproject.toml"
