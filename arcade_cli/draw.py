@@ -68,12 +68,13 @@ def render_colors(image, scale):
 
     img = img.reshape((img.shape[1] * img.shape[0], 3))
     kmeans = cluster.KMeans(n_clusters=24)
+    _ = kmeans.fit(img)
 
     labels = kmeans.labels_
     stars = []
     for y in range(height):
         for x in range(width):
             label = labels[y * width + x]
-            stars.append((x, y, label))
+            stars.append((x, y, label + 1))
 
     return stars

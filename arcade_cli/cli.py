@@ -222,10 +222,18 @@ def render_group():
 
 @render_group.command(name="math")
 @click.option(
-    "--start", type=float, default=0, help="where the input to the formula should start"
+    "-sa",
+    "--start",
+    type=float,
+    default=0,
+    help="where the input to the formula should start",
 )
 @click.option(
-    "--end", type=float, default=1, help="where the input to the formula should end"
+    "-e",
+    "--end",
+    type=float,
+    default=1,
+    help="where the input to the formula should end",
 )
 @click.option(
     "-yi", "--y-min", type=float, default=None, help="filter out y values below this"
@@ -234,6 +242,7 @@ def render_group():
     "-ya", "--y-max", type=float, default=None, help="filter out y values above this"
 )
 @click.option(
+    "-st",
     "--step",
     type=float,
     default=0.01,
