@@ -11,9 +11,13 @@ install_requires = \
 ['PyJWT>=2.3.0,<3.0.0',
  'click>=8.0.3,<9.0.0',
  'more-itertools>=8.12.0,<9.0.0',
+ 'numpy',
+ 'opencv-python>=4.5.5,<5.0.0',
  'poetry2setup>=1.0.0,<2.0.0',
  'requests>=2.27.1,<3.0.0',
- 'rich>=11.1.0,<12.0.0']
+ 'rich>=11.1.0,<12.0.0',
+ 'scikit-learn>=1.0.2,<2.0.0',
+ 'scipy>=1.8.0,<2.0.0']
 
 entry_points = \
 {'console_scripts': ['arcade = arcade_cli.cli:arcade_cli']}
@@ -32,7 +36,7 @@ setup_kwargs = {
     'package_data': package_data,
     'install_requires': install_requires,
     'entry_points': entry_points,
-    'python_requires': '>=3.8,<4.0',
+    'python_requires': '>=3.8,<3.11',
 }
 
 

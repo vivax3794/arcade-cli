@@ -129,6 +129,7 @@ def draw_stars(file: TextIOWrapper) -> None:
     """
     Draw stars in the sky!
 
+    \b
     Arguments:
         file: .csv with stars to draw :D
     """
@@ -156,6 +157,20 @@ def draw_stars(file: TextIOWrapper) -> None:
     default=1,
     help="scale, for example to half the size --scale 2",
 )
+@click.option(
+    "-sx",
+    "--scale_x",
+    type=float,
+    default=1,
+    help="scale, for example to half the size --scale 2",
+)
+@click.option(
+    "-sy",
+    "--scale_y",
+    type=float,
+    default=1,
+    help="scale, for example to half the size --scale 2",
+)
 @click.option("-x", "--x-offset", type=float, default=0, help="move stars on x-axsis")
 @click.option("-y", "--y-offset", type=float, default=0, help="move stars on y-axsis")
 @click.option(
@@ -169,8 +184,10 @@ def draw_stars(file: TextIOWrapper) -> None:
 @click.argument("output_file", type=click.File("w+"))
 def modify_stars(
     input_file: TextIOWrapper,
-    output_file: TextIOWrapper | None,
+    output_file: TextIOWrapper,
     scale: float,
+    scale_x: float,
+    scale_y: float,
     x_offset: float,
     y_offset: float,
     fit: str,
@@ -183,16 +200,14 @@ def modify_stars(
         input_file: source file of stars
         output_file: file to save stars in
     """
-    if output_file is None:
-        output_file = input_file
-
     stars = arcade.load_stars_from_file(input_file)
 
     if fit != "none":
         stars = draw.normalize(stars, mode=fit)
 
     stars = [
-        (x / scale + x_offset, y / scale + x_offset, type_) for x, y, type_ in stars
+        (x / scale / scale_x + x_offset, y / scale / scale_y + x_offset, type_)
+        for x, y, type_ in stars
     ]
 
     arcade.store_stars_in_file(stars, output_file)
@@ -213,6 +228,12 @@ def render_group():
     "--end", type=float, default=1, help="where the input to the formula should end"
 )
 @click.option(
+    "-yi", "--y-min", type=float, default=None, help="filter out y values below this"
+)
+@click.option(
+    "-ya", "--y-max", type=float, default=None, help="filter out y values above this"
+)
+@click.option(
     "--step",
     type=float,
     default=0.01,
@@ -227,6 +248,8 @@ def render_math(
     start: float,
     end: float,
     step: float,
+    y_min: float | None,
+    y_max: float | None,
     star: int,
 ):
     """
@@ -239,5 +262,16 @@ def render_math(
         formula: formula to render, use x as the x pos
         output_file: file to store stars in
     """
-    stars = draw.draw_formula(formula, start, end, step, star)
+    stars = draw.draw_formula(formula, start, end, step, y_min, y_max, star)
+    arcade.store_stars_in_file(stars, output_file)
+
+
+@render_group.command(name="colors")
+@click.argument("output_file", type=click.File("w+"))
+@click.argument("img_file", type=str)
+@click.argument("scale", type=int)
+def render_img_colors(output_file, img_file, scale: int):
+    stars = draw.render_colors(img_file, scale)
+
+    console.print(f"saving [bold cyan]{len(stars)}[/bold cyan] stars!")
     arcade.store_stars_in_file(stars, output_file)
