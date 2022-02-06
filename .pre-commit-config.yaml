@@ -23,20 +23,6 @@ repos:
         language: system
         types: [python]
         require_serial: true
-      - id: pyright
-        name: pyright
-        description: Run pyright
-        entry: poetry run pyright
-        language: system
-        types: [python]
-        require_serial: true
-      - id: pytest
-        name: pytest
-        description: Run pytest
-        entry: poetry run pytest tests
-        language: system
-        types: [python]
-        require_serial: true
       - id: setup.py
         name: setup.py
         description: Create setup.py

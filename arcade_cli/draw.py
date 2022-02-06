@@ -1,10 +1,17 @@
 from __future__ import annotations
 
 import math
+import os
+from io import BytesIO
 from typing import TYPE_CHECKING
 
 import cv2
+import svgpathtools
+from matplotlib import pyplot as plt
 from sklearn import cluster
+
+plt.switch_backend("svg")
+
 
 if TYPE_CHECKING:
     from typing import List
@@ -80,3 +87,48 @@ def render_colors(image, scale):
             stars.append((x, y, label + 1))
 
     return stars
+
+
+def render_letter(text: str):
+    fig = plt.figure(figsize=(0.01, 0.01))
+    fig.text(0, 0, text)
+
+    output = BytesIO()
+    fig.savefig(output, dpi=300, format="svg")
+    plt.close(fig)
+
+    output.seek(0)
+    svg_code = output.read().decode()
+
+    with open("tmp.svg", "w+") as f:
+        f.write(svg_code)
+
+    paths, _ = svgpathtools.svg2paths("tmp.svg")
+    os.remove("tmp.svg")
+
+    stars = []
+    for path in paths:
+        for index in range(200):
+            pos = path.point(index / 200)
+            x = pos.real
+            y = pos.imag
+            stars.append((x, y, 1))
+
+    return stars
+
+
+def render_text(text: str):
+    stars = [(0, 0, 0)]
+    for letter in text:
+        try:
+            new_stars = render_letter(letter)
+        except Exception as e:
+            print("ERROR:", e)
+            continue
+
+        max_x = max(x for x, _, _ in stars)
+        stars.extend((x + max_x, y, type_) for x, y, type_ in new_stars)
+
+    max_y = max(y for _, y, _ in stars)
+
+    return [(x, max_y - y, type_) for x, y, type_ in stars]

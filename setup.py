@@ -10,6 +10,7 @@ package_data = \
 install_requires = \
 ['PyJWT>=2.3.0,<3.0.0',
  'click>=8.0.3,<9.0.0',
+ 'matplotlib>=3.5.1,<4.0.0',
  'more-itertools>=8.12.0,<9.0.0',
  'numpy',
  'opencv-python>=4.5.5,<5.0.0',
@@ -17,14 +18,15 @@ install_requires = \
  'requests>=2.27.1,<3.0.0',
  'rich>=11.1.0,<12.0.0',
  'scikit-learn>=1.0.2,<2.0.0',
- 'scipy>=1.8.0,<2.0.0']
+ 'scipy>=1.8.0,<2.0.0',
+ 'svgpathtools>=1.4.4,<2.0.0']
 
 entry_points = \
 {'console_scripts': ['arcade = arcade_cli.cli:arcade_cli']}
 
 setup_kwargs = {
     'name': 'arcade-cli',
-    'version': '0.2.1',
+    'version': '0.2.3',
     'description': 'A tool for interacting with the matise arcade',
     'long_description': None,
     'author': 'vivax',

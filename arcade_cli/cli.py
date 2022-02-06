@@ -289,3 +289,11 @@ def render_img_colors(output_file, img_file, scale: int):
 
     console.print(f"saving [bold cyan]{len(stars)}[/bold cyan] stars!")
     arcade.store_stars_in_file(stars, output_file)
+
+
+@render_group.command(name="text")
+@click.argument("output_file", type=click.File("w+"))
+@click.argument("text", type=str)
+def render_text(output_file, text):
+    stars = draw.render_text(text)
+    arcade.store_stars_in_file(stars, output_file)
