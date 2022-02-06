@@ -21,8 +21,6 @@ def normalize(stars: List[Star], mode: str) -> List[Star]:
     max_x = max(x for x, _, _ in stars)
     max_y = max(y for _, y, _ in stars)
 
-    print(max_x, max_x * (1920 / 1080), max_y)
-
     # a / x = 1.78
     # a = 1.78*x
 

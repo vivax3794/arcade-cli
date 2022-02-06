@@ -1,0 +1,9 @@
+POST /get/userStarSaveData HTTP/1.1
+Host: arcade-placement-tool.herokuapp.com
+Content-Type: application/json
+Content-Length: 420
+
+{
+    "jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDQxMjA2NjUsIm9wYXF1ZV91c2VyX2lkIjoiVWlZLU43UGJOWUhNLWxRalRXMUI4IiwidXNlcl9pZCI6IjE4MDg0MDczMCIsImNoYW5uZWxfaWQiOiI0NjgxMDY3MjMiLCJyb2xlIjoibW9kZXJhdG9yIiwiaXNfdW5saW5rZWQiOmZhbHNlLCJwdWJzdWJfcGVybXMiOnsibGlzdGVuIjpbImJyb2FkY2FzdCIsIndoaXNwZXItVWlZLU43UGJOWUhNLWxRalRXMUI4IiwiZ2xvYmFsIl19fQ.ZTezTA2t-J0tvLiIPFw6PmAPm9fYbU674wYjKKvUo5g",
+    "saveIndex": 1
+}
