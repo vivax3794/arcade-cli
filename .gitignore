@@ -3,4 +3,8 @@
 __pycache__
 build
 dist
-tmp.xml
+__pypackages__
+.hypothesis
+.nox
+.pytest_cache
+htmlcov

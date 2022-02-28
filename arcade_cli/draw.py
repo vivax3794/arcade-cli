@@ -3,15 +3,19 @@ from __future__ import annotations
 import math
 import os
 from io import BytesIO
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
-import cv2
+# cv2 is strange with typing
+# (I just hope it is not because of pdm it is acting strange.)
+if TYPE_CHECKING:
+    cv2: Any = ...
+else:
+    import cv2
 import svgpathtools
 from matplotlib import pyplot as plt
 from sklearn import cluster
 
 plt.switch_backend("svg")
-
 
 if TYPE_CHECKING:
     from typing import List
@@ -32,10 +36,10 @@ def normalize(stars: List[Star], mode: str) -> List[Star]:
     # a = 1.78*x
 
     if mode == "ratio":
-        scale = max(max_x * (1920 / 1080), max_y)
-        stars = [(x / scale / 1.78, y / scale, type_) for x, y, type_ in stars]
+        scale = max(max_x / (1920 / 1080), max_y) or 1
+        stars = [((x / scale) / (1920 / 1080), y / scale, type_) for x, y, type_ in stars]
     else:
-        stars = [(x / max_x, y / max_y, type_) for x, y, type_ in stars]
+        stars = [(x / (max_x or 1), y / (max_y or 1), type_) for x, y, type_ in stars]
 
     return stars
 
@@ -65,7 +69,7 @@ def draw_formula(
 
 
 # BY MATISSE: https://discord.com/channels/799761313772863508/803440400193814589/926572167951433829
-def render_colors(image, scale):
+def render_colors(image: str, scale: int) -> List[Star]:
     img = cv2.imread(image)
     print(img.shape)
     width = int(img.shape[1] / scale)
@@ -79,7 +83,7 @@ def render_colors(image, scale):
     kmeans = cluster.KMeans(n_clusters=24)
     _ = kmeans.fit(img)
 
-    labels = kmeans.labels_
+    labels: List[int] = kmeans.labels_  # type: ignore
     stars = []
     for y in range(height):
         for x in range(width):
@@ -89,7 +93,7 @@ def render_colors(image, scale):
     return stars
 
 
-def render_letter(text: str):
+def render_letter(text: str) -> List[Star]:
     fig = plt.figure(figsize=(0.01, 0.01))
     fig.text(0, 0, text)
 
@@ -103,13 +107,13 @@ def render_letter(text: str):
     with open("tmp.svg", "w+") as f:
         f.write(svg_code)
 
-    paths, _ = svgpathtools.svg2paths("tmp.svg")
+    paths, _ = svgpathtools.svg2paths("tmp.svg")  # type: ignore
     os.remove("tmp.svg")
 
     stars = []
     for path in paths:
         for index in range(200):
-            pos = path.point(index / 200)
+            pos: complex = path.point(index / 200)  # type: ignore
             x = pos.real
             y = pos.imag
             stars.append((x, y, 1))
@@ -117,8 +121,8 @@ def render_letter(text: str):
     return stars
 
 
-def render_text(text: str):
-    stars = [(0, 0, 0)]
+def render_text(text: str) -> List[Star]:
+    stars: List[Star] = [(0, 0, 0)]
     for letter in text:
         try:
             new_stars = render_letter(letter)

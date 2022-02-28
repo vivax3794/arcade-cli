@@ -4,7 +4,6 @@ import csv
 from io import TextIOWrapper
 from typing import Dict, List, Tuple
 
-import jwt
 import requests
 
 Star = Tuple[float, float, int]
@@ -26,11 +25,6 @@ def load_stars_from_file(file: TextIOWrapper) -> List[Star]:
         stars.append((float(x), float(y), int(type_)))
 
     return stars
-
-
-def get_twitch_id_from_jwt(jwt_token: str) -> str:
-    data = jwt.decode(jwt_token, options={"verify_signature": False})
-    return data["opaque_user_id"]
 
 
 def from_api_stars(data: List[Dict[str, float]]) -> List[Star]:

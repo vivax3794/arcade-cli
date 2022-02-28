@@ -1,36 +1,49 @@
-[tool.poetry]
+[project]
+authors = [
+    {name = "vivax", email = "vivax3794@protonmail.com"},
+]
+license = {text = "MIT"}
+requires-python = ">=3.8,<3.11"
+dependencies = [
+    "click<9.0.0,>=8.0.3",
+    "requests<3.0.0,>=2.27.1",
+    "more-itertools<9.0.0,>=8.12.0",
+    "PyJWT<3.0.0,>=2.3.0",
+    "rich<12.0.0,>=11.1.0",
+    "numpy",
+    "scikit-learn<2.0.0,>=1.0.2",
+    "opencv-python<5.0.0,>=4.5.5",
+    "scipy<2.0.0,>=1.8.0",
+    "matplotlib<4.0.0,>=3.5.1",
+    "svgpathtools<2.0.0,>=1.4.4"]
 name = "arcade-cli"
-version = "0.2.3"
+version = "0.2.4"
 description = "A tool for interacting with the matise arcade"
-authors = ["vivax <vivax3794@protonmail.com>"]
-license = "MIT"
-
-[tool.poetry.dependencies]
-python = "^3.8,<3.11"
-click = "^8.0.3"
-requests = "^2.27.1"
-more-itertools = "^8.12.0"
-PyJWT = "^2.3.0"
-rich = "^11.1.0"
-poetry2setup = "^1.0.0"
-numpy = "*"
-scikit-learn = "^1.0.2"
-opencv-python = "^4.5.5"
-scipy = "^1.8.0"
-matplotlib = "^3.5.1"
-svgpathtools = "^1.4.4"
-
-[tool.poetry.dev-dependencies]
-pytest = "^6.2.5"
-flake8 = "^4.0.1"
-isort = "^5.10.1"
-black = "^22.1.0"
-pyright = "^0.0.13"
-pre-commit = "^2.17.0"
-
-[tool.poetry.scripts]
-arcade = 'arcade_cli.cli:arcade_cli'
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["pdm-pep517"]
+build-backend = "pdm.pep517.api"
+
+[project.scripts]
+arcade = "arcade_cli.cli:arcade_cli"
+
+[tool.pdm.dev-dependencies]
+test = [
+    "pytest<7.0.0,>=6.2.5",
+    "hypothesis>=6.37.2",
+    "pytest-cov>=3.0.0",
+]
+lint = [
+    "flake8<5.0.0,>=4.0.1",
+    "pyright<1.0.0,>=0.0.13",
+]
+format = [
+    "isort<6.0.0,>=5.10.1",
+    "black<23.0.0,>=22.1.0",
+]
+
+[tool.pdm.scripts]
+tests = "pytest tests -v --cov=arcade_cli --cov-report html"
+
+[tool.pyright]
+extraPaths = ["__pypackages__/3.10/lib"]
