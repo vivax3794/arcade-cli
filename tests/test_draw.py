@@ -13,8 +13,8 @@ def test_normalize_range(stars, mode):
     xs = [x for x, _, _ in new_stars]
     ys = [y for _, y, _ in new_stars]
 
-    assert 0 <= min(xs) and max(xs) <= 1.01, "x values not within 0-1 range"
-    assert 0 <= min(ys) and max(ys) <= 1.01, "y values not within 0-1 range"
+    assert min(xs) >= 0 and max(xs) <= 1.01, "x values not within 0-1 range"
+    assert min(ys) >= 0 and max(ys) <= 1.01, "y values not within 0-1 range"
 
 
 @given(st.lists(star_strat, min_size=1), st.sampled_from(["full", "ratio"]))

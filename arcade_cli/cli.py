@@ -285,6 +285,15 @@ def render_math(
 @click.argument("img_file", type=str)
 @click.argument("scale", type=int)
 def render_img_colors(output_file, img_file, scale: int):
+    """
+    Render img as stars.
+
+    \b
+    Arguments:
+        output_file: file to store stars in
+        img_file: image to render
+        scale: scale the image down by this factor
+    """
     stars = draw.render_colors(img_file, scale)
 
     console.print(f"saving [bold cyan]{len(stars)}[/bold cyan] stars!")
@@ -295,5 +304,30 @@ def render_img_colors(output_file, img_file, scale: int):
 @click.argument("output_file", type=click.File("w+"))
 @click.argument("text", type=str)
 def render_text(output_file, text):
+    """
+    Render text as stars
+
+    \b
+    Arguments:
+        output_file: file to store stars in
+        text: text to render
+    """
     stars = draw.render_text(text)
+    arcade.store_stars_in_file(stars, output_file)
+
+@render_group.command("svg")
+@click.argument("output_file", type=click.File("w+"))
+@click.argument("svg_file", type=str)
+@click.argument("path_res", default=200, type=int)
+def render_svg(output_file, svg_file, path_res):
+    """
+    Generate stars from an svg file.
+
+    \b
+    Argument:
+        output_file: file to store stars in
+        svg_file: svg file to read
+        path_res: resolution of the path
+    """
+    stars = draw.render_svg(svg_file, path_res)
     arcade.store_stars_in_file(stars, output_file)

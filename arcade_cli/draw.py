@@ -1,9 +1,12 @@
 from __future__ import annotations
+from fileinput import filename
 
 import math
 import os
 from io import BytesIO
 from typing import TYPE_CHECKING, Any
+import random
+import string
 
 # cv2 is strange with typing
 # (I just hope it is not because of pdm it is acting strange.)
@@ -93,6 +96,20 @@ def render_colors(image: str, scale: int) -> List[Star]:
     return stars
 
 
+def render_svg(filename: str, path_res: int) -> List[Star]:
+    paths, _ = svgpathtools.svg2paths(filename)  # type: ignore
+
+    stars = []
+    for path in paths:
+        for index in range(path_res):
+            pos: complex = path.point(index / 200)  # type: ignore
+            x = pos.real
+            y = pos.imag
+            stars.append((x, y, 1))
+    return stars
+
+
+
 def render_letter(text: str) -> List[Star]:
     fig = plt.figure(figsize=(0.01, 0.01))
     fig.text(0, 0, text)
@@ -104,22 +121,15 @@ def render_letter(text: str) -> List[Star]:
     output.seek(0)
     svg_code = output.read().decode()
 
-    with open("tmp.svg", "w+") as f:
+    # generate random filename that is very unlikely to be in use
+    filename = "".join(random.choice(string.ascii_letters) for _ in range(20)) + ".svg"
+
+    with open(filename, "w+") as f:
         f.write(svg_code)
 
-    paths, _ = svgpathtools.svg2paths("tmp.svg")  # type: ignore
-    os.remove("tmp.svg")
-
-    stars = []
-    for path in paths:
-        for index in range(200):
-            pos: complex = path.point(index / 200)  # type: ignore
-            x = pos.real
-            y = pos.imag
-            stars.append((x, y, 1))
-
+    stars = render_svg(filename, 200)
+    os.remove(filename)
     return stars
-
 
 def render_text(text: str) -> List[Star]:
     stars: List[Star] = [(0, 0, 0)]
