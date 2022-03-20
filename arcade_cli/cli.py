@@ -149,76 +149,104 @@ def draw_stars(file: TextIOWrapper) -> None:
     console.print("[green]DONE[/green]")
 
 
-@arcade_cli.command(name="modify")
-@click.option(
-    "-s",
-    "--scale",
-    type=float,
-    default=1,
-    help="scale, for example to half the size --scale 2",
-)
-@click.option(
-    "-sx",
-    "--scale_x",
-    type=float,
-    default=1,
-    help="scale, for example to half the size --scale 2",
-)
-@click.option(
-    "-sy",
-    "--scale_y",
-    type=float,
-    default=1,
-    help="scale, for example to half the size --scale 2",
-)
-@click.option("-x", "--x-offset", type=float, default=0, help="move stars on x-axsis")
-@click.option("-y", "--y-offset", type=float, default=0, help="move stars on y-axsis")
-@click.option(
-    "-f",
-    "--fit",
-    type=click.Choice(["none", "ratio", "full"]),
-    default="none",
-    help="scale stars to fit on the screen",
-)
-@click.option("--y-stars", is_flag=True, help="set star type based on y value!")
-@click.argument("input_file", type=click.File("r"))
-@click.argument("output_file", type=click.File("w+"))
-def modify_stars(
-    input_file: TextIOWrapper,
-    output_file: TextIOWrapper,
-    scale: float,
-    scale_x: float,
-    scale_y: float,
-    x_offset: float,
-    y_offset: float,
-    y_stars: bool,
-    fit: str,
-) -> None:
+# modify command grou
+@arcade_cli.group(name="modify")
+def modify_group():
     """
     Modify stars in a file
+    """ 
+
+@modify_group.command(name="scale")
+@click.argument("file", type=str)
+@click.argument("scale", type=float)
+def modify_scale(file: TextIOWrapper, scale: float) -> None:
+    """
+    Modify star scale
 
     \b
     Arguments:
-        input_file: source file of stars
-        output_file: file to save stars in
+        file: source file of stars
+        scale: scale, for example to half the size --scale 2
     """
-    stars = arcade.load_stars_from_file(input_file)
-
-    if fit != "none":
-        stars = draw.normalize(stars, mode=fit)
+    with open(file, "r") as f:
+        stars = arcade.load_stars_from_file(f)
 
     stars = [
-        (x / scale / scale_x + x_offset, y / scale / scale_y + y_offset, type_)
+        (x / scale, y / scale, type_)
         for x, y, type_ in stars
     ]
 
-    if y_stars:
-        stars = [(x, y, int(y * 23) + 1) for x, y, _ in stars]
+    with open(file, "w+") as f:
+        arcade.store_stars_in_file(stars, f)
 
-    arcade.store_stars_in_file(stars, output_file)
+    console.print("scaled stars")
+
+@modify_group.command(name="move")
+@click.argument("file", type=str)
+@click.option("-x", "--x-offset", type=float, default=0, help="move stars on x-axsis")
+@click.option("-y", "--y-offset", type=float, default=0, help="move stars on y-axsis")
+def modify_move(file: TextIOWrapper, x_offset: float, y_offset: float) -> None:
+    """
+    Modify star cords using offset
+
+    \b
+    Arguments:
+        file: source file of stars
+    """
+    with open(file, "r") as f:
+        stars = arcade.load_stars_from_file(f)
+
+    stars = [(x + x_offset, y + y_offset, type_) for x, y, type_ in stars]
+
+    with open(file, "w+") as f:
+        arcade.store_stars_in_file(stars, f)
+
+    console.print("moved stars")
+
+@modify_group.command(name="fit")
+@click.argument("file", type=str)
+@click.argument("mode", type=click.Choice(["ratio", "full"]))
+def modify_fit(file: str, mode: str) -> None:
+    """
+    Modify star dimension to fit the screen
+
+    \b
+    Arguments:
+        file: source file of stars
+        mode: ratio keeps ratio, while full scales to fit the screen edges
+    """
+    with open(file, "r") as f:
+        stars = arcade.load_stars_from_file(f)
+
+    stars = draw.normalize(stars, mode=mode)
+
+    with open(file, "w+") as f:
+        arcade.store_stars_in_file(stars, f)
+
+    console.print("fitted stars")
+
+@modify_group.command(name="y-colors")
+@click.argument("file", type=str)
+def modify_y_colors(file: TextIOWrapper) -> None:
+    """
+    Modify star type based on y value
+
+    \b
+    Arguments:
+        file: source file of stars
+    """
+    with open(file, "r") as f:
+        stars = arcade.load_stars_from_file(f)
+
+    # change star type based on y value (min y:max y mapped to 1-23)
+    min_y = min(y for x, y, _ in stars)
+    max_y = max(y for x, y, type_ in stars)
+    stars = [(x, y, int((y - min_y) / (max_y - min_y) * 23) + 1) for x, y, type_ in stars]
+
+    with open(file, "w+") as f:
+        arcade.store_stars_in_file(stars, f)
 
     console.print("modified stars")
-
 
 @arcade_cli.group(name="render")
 def render_group():
