@@ -132,6 +132,7 @@ def render_letter(text: str) -> List[Star]:
     return stars
 
 def render_text(text: str) -> List[Star]:
+    text = text.replace(" ", "_") # make sure spaces actually work
     stars: List[Star] = [(0, 0, 0)]
     for letter in text:
         try:

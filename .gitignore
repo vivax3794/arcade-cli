@@ -8,3 +8,4 @@ __pypackages__
 .nox
 .pytest_cache
 htmlcov
+*.svg
