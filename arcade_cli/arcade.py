@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import os
 from io import TextIOWrapper
 from typing import Dict, List, Tuple
 
@@ -66,11 +67,10 @@ def save_stars_to_bucket(jwt: str, bucket: int, stars: List[Star]) -> None | str
 
 
 def draw_in_stars(jwt: str, stars: List[Star]) -> None | str:
-    data = {"jwt": jwt, "stars": to_api_stars(stars)}
+    url = os.getenv("ARCADE_URL", "https://arcade-placement-tool.herokuapp.com/send/toStarField")
 
-    resp = requests.post(
-        "https://arcade-placement-tool.herokuapp.com/send/toStarField", json=data
-    )
+    data = {"jwt": jwt, "stars": to_api_stars(stars), "twitchId": "unknown-sorry (cli)"}
+    resp = requests.post(url, json=data)
     print(resp.text)
     if resp.status_code != 200:
         return "unknown error"

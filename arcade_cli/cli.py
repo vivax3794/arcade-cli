@@ -359,3 +359,25 @@ def render_svg(output_file, svg_file, path_res):
     """
     stars = draw.render_svg(svg_file, path_res)
     arcade.store_stars_in_file(stars, output_file)
+
+
+@arcade_cli.command("verify")
+@click.argument("input_file", type=click.File("r"))
+def verify(input_file: TextIOWrapper) -> None:
+    """
+    Verify that all starts fit withing the screen.
+
+    \b
+    Arguments:
+        input_file: file to read stars from
+    """
+    stars = arcade.load_stars_from_file(input_file)
+    out_of_bounds = False
+    for x, y, _ in stars:
+        if x < 0 or x > 1 or y < 0 or y > 1:
+            console.print(f"[bold red]{x} {y}[/bold red] is out of bounds!")
+            out_of_bounds = True
+    
+    if not out_of_bounds:
+        console.print("all stars fit within the screen!")
+    
